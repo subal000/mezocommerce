@@ -1,0 +1,56 @@
+{
+  "voice": "en-US-AndrewNeural",
+  "rate": "+6%",
+  "scenes": [
+    {
+      "id": "intro",
+      "title": "The problem",
+      "text": "Taking crypto at checkout usually means: send tokens to this address. Then the merchant matches transfers to orders by hand. Wrong amounts slip through, and orders get marked paid on a screenshot."
+    },
+    {
+      "id": "landing",
+      "title": "What MezoCommerce is",
+      "text": "MezoCommerce is checkout for stores on Mezo. Customers pay in MUSD, the Bitcoin-backed dollar, through a hosted page, a widget, or the API. Money goes straight to the merchant's wallet. We never hold it."
+    },
+    {
+      "id": "onboard",
+      "title": "Merchant onboarding",
+      "text": "A merchant signs in with their wallet, names the store, and registers it on Mezo. That's the only transaction setup needs. After it, MezoCommerce signs each checkout, with a key that can't change where the money goes."
+    },
+    {
+      "id": "create",
+      "title": "Create a payment link",
+      "text": "Now an order: 12.50 MUSD for a tin of tea. One click makes a payment link and a QR code. No wallet prompt."
+    },
+    {
+      "id": "pay",
+      "title": "Customer pays",
+      "text": "The customer opens the link. The store, the amount and the payout wallet are locked in a signed payment intent. They sign one exact-amount permission and confirm one transaction."
+    },
+    {
+      "id": "paid",
+      "title": "Verified on-chain",
+      "text": "The server reads the payment event on Mezo itself and waits for two confirmations. Only then is the order paid, with a link to the transaction."
+    },
+    {
+      "id": "dashboard",
+      "title": "Merchant dashboard",
+      "text": "The merchant sees it in the dashboard, and their store can get a signed webhook. Refunds go back to the original payer, capped at what was paid."
+    },
+    {
+      "id": "how",
+      "title": "How it works",
+      "text": "Under the hood is one contract. A payment can't be paid twice. A wrong amount fails. And the contract never holds funds."
+    },
+    {
+      "id": "live",
+      "title": "Live on Mezo testnet",
+      "text": "It's live on Mezo testnet, with the contract source verified. Wallets connect through Mezo Passport, Bitcoin or Ethereum."
+    },
+    {
+      "id": "outro",
+      "title": "What's next",
+      "text": "Next: a Shopify payments app, more tokens, and store plugins. MezoCommerce: sell beyond traditional payment rails."
+    }
+  ]
+}

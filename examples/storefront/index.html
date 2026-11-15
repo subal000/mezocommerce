@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pebble Print Shop (example store)</title>
+    <style>
+      :root { color-scheme: light dark; --ink: #1d1f23; --muted: #5e636e; --line: #e3e5e9; --bg: #fafafa; --card: #fff; }
+      @media (prefers-color-scheme: dark) { :root { --ink: #eceef1; --muted: #a2a7b1; --line: #2c3038; --bg: #15171b; --card: #1c1f24; } }
+      * { box-sizing: border-box; }
+      body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
+      .note { background: #fff6d6; color: #4a3b00; padding: 10px 16px; font-size: 14px; text-align: center; }
+      header, main { max-width: 880px; margin: 0 auto; padding: 24px 16px; }
+      h1 { font-size: 22px; margin: 0; }
+      header p { margin: 4px 0 0; color: var(--muted); }
+      ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+      li { display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; align-items: center; padding: 16px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+      li h2 { font-size: 16px; margin: 0; }
+      li p { margin: 0; color: var(--muted); font-size: 14px; }
+      .price { font-variant-numeric: tabular-nums; font-weight: 600; }
+      .buy { grid-column: 1 / -1; }
+      @media (min-width: 640px) { li { grid-template-columns: 1fr auto auto; } .buy { grid-column: auto; } }
+      #msg { min-height: 24px; margin-top: 16px; }
+    </style>
+  </head>
+  <body>
+    <p class="note">Example store on Mezo Testnet. Payments use test MUSD with no real value.</p>
+    <header>
+      <h1>Pebble Print Shop</h1>
+      <p>Prints and cards. Pay with MUSD.</p>
+    </header>
+    <main>
+      <ul id="products" aria-label="Products"></ul>
+      <p id="msg" role="status" aria-live="polite"></p>
+    </main>
+    <!-- Loaded from the MezoCommerce origin: proves cross-origin embedding. -->
+    <script src="__MEZOCOMMERCE_URL__/checkout.js"></script>
+    <script>
+      (function () {
+        var msg = document.getElementById("msg");
+        var params = new URLSearchParams(location.search);
+        if (params.get("paid")) msg.textContent = "Thanks. Order " + params.get("paid") + " is paid.";
+
+        fetch("/products").then(function (r) { return r.json(); }).then(function (products) {
+          var list = document.getElementById("products");
+          products.forEach(function (p) {
+            var li = document.createElement("li");
+            var text = document.createElement("div");
+            var h = document.createElement("h2"); h.textContent = p.name;
+            var d = document.createElement("p"); d.textContent = p.detail;
+            text.appendChild(h); text.appendChild(d);
+            var price = document.createElement("span"); price.className = "price"; price.textContent = p.price + " MUSD";
+            var buy = document.createElement("div"); buy.className = "buy";
+            li.appendChild(text); li.appendChild(price); li.appendChild(buy);
+            list.appendChild(li);
+            if (!window.MezoCommerce) { buy.textContent = "Checkout unavailable"; return; }
+            MezoCommerce.button(buy, {
+              createUrl: "/create-intent",
+              body: { sku: p.sku },
+              label: "Pay " + p.price + " MUSD",
+              onSuccess: function (e) { msg.textContent = "Payment confirmed on-chain. Order " + (e.paymentIntentId || "") + " is paid."; },
+              onCancel: function () { msg.textContent = "Checkout closed. You weren't charged."; },
+              onExpired: function () { msg.textContent = "That checkout expired. Try again."; },
+              onError: function (err) { msg.textContent = "Couldn't start checkout: " + err.message; },
+            });
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MezoCommerce demo cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Tokens copied from app/globals.css (light theme). */
+  :root {
+    --bg: oklch(0.99 0.002 255);
+    --ink: oklch(0.2 0.012 255);
+    --ink-2: oklch(0.38 0.014 255);
+    --ink-3: oklch(0.47 0.014 255);
+    --line: oklch(0.91 0.005 255);
+    --primary: oklch(0.22 0.014 255);
+    --brand: oklch(0.52 0.105 165);
+    --bad: oklch(0.55 0.17 25);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "Geist", system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+    display: grid; place-items: center;
+  }
+  .card { display: none; width: 1060px; }
+  .card.on { display: block; }
+  .brand { display: flex; align-items: center; gap: 20px; }
+  .brand svg { width: 68px; height: 68px; }
+  .brand h1 { font-size: 60px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
+  .lead { margin-top: 24px; font-size: 27px; line-height: 1.4; color: var(--ink-2); max-width: 36ch; text-wrap: balance; }
+  .kicker { font-size: 20px; color: var(--ink-3); font-weight: 500; }
+  .big { margin-top: 18px; font-size: 46px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; max-width: 24ch; }
+  .addr { margin-top: 26px; display: inline-block; font-family: "Geist Mono", ui-monospace, monospace; font-size: 26px;
+    border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; background: #fff; }
+  .list { margin-top: 48px; border-top: 1px solid var(--line); padding: 0; list-style: none; }
+  .list li { padding: 20px 0; border-bottom: 1px solid var(--line); display: flex; gap: 18px; align-items: baseline;
+    font-size: 26px; line-height: 1.35; opacity: 0; transform: translateY(4px);
+    transition: opacity .35s cubic-bezier(.25,1,.5,1), transform .35s cubic-bezier(.25,1,.5,1); }
+  .list li.show { opacity: 1; transform: none; }
+  .list li i { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--bad); transform: translateY(-3px); }
+  .list.good li i { background: var(--brand); }
+  .list li code { font-family: "Geist Mono", ui-monospace, monospace; font-size: 23px; }
+  .label { font-size: 18px; color: var(--ink-3); margin-top: 56px; }
+</style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute">
+    <symbol id="mark" viewBox="0 0 32 32">
+      <rect width="32" height="32" rx="8" fill="oklch(0.22 0.014 255)"/>
+      <path d="M10 21.5 22 10.5" stroke-width="2.6" stroke-linecap="round" stroke="oklch(0.985 0.002 255)"/>
+      <circle cx="10" cy="21.5" r="3.2" fill="oklch(0.985 0.002 255)"/>
+      <circle cx="22" cy="10.5" r="3.6" fill="oklch(0.52 0.105 165)"/>
+    </symbol>
+  </svg>
+
+  <section class="card" id="intro">
+    <p class="kicker">Taking crypto at checkout today</p>
+    <p class="big">“Send the tokens to this address.”</p>
+    <p class="addr">0x7a1c…e93f</p>
+    <ol class="list">
+      <li data-step="1"><i></i>Transfers are matched to orders by hand</li>
+      <li data-step="2"><i></i>Wrong amounts slip through</li>
+      <li data-step="3"><i></i>Orders get marked paid on a screenshot</li>
+    </ol>
+  </section>
+
+  <section class="card" id="how">
+    <div class="brand"><svg><use href="#mark"/></svg><h1>One contract</h1></div>
+    <p class="lead">MerchantPaymentProcessor on Mezo. Each checkout is an EIP-712 payment intent signed for one order.</p>
+    <ol class="list good">
+      <li data-step="1"><i></i>Each payment ID can be paid once per merchant</li>
+      <li data-step="2"><i></i>Amount, token and payout are signed, so a wrong amount fails</li>
+      <li data-step="3"><i></i>Customer to merchant wallet directly. The contract never holds funds</li>
+    </ol>
+  </section>
+
+  <section class="card" id="outro">
+    <div class="brand"><svg><use href="#mark"/></svg><h1>MezoCommerce</h1></div>
+    <p class="lead">Accept payments in MUSD. Sell beyond traditional payment rails.</p>
+    <ol class="list good">
+      <li data-step="1"><i></i>Shopify payments app</li>
+      <li data-step="2"><i></i>More payment tokens</li>
+      <li data-step="3"><i></i>Plugins for popular store platforms</li>
+    </ol>
+    <p class="label">mezocommerce.vercel.app · Mezo testnet · AI-assisted security review, not independently audited</p>
+  </section>
+<script>
+  function show(name) {
+    document.querySelectorAll(".card").forEach((c) => c.classList.remove("on"));
+    document.getElementById(name).classList.add("on");
+  }
+  window.step = (n) => document.querySelectorAll(`.card.on [data-step="${n}"]`).forEach((e) => e.classList.add("show"));
+  show(location.hash.slice(1) || "intro");
+  window.addEventListener("hashchange", () => show(location.hash.slice(1)));
+</script>
+</body>
+</html>
