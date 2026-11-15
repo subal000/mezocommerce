@@ -1,0 +1,48 @@
+# Paid Render worker. Not used on the live testnet app yet: there the worker runs free from Supabase cron
+# (README, Deploy step 4). Switch here when a paid worker is worth it, then unschedule the cron job.
+# Render Blueprint — MezoCommerce background worker. The web app runs on Vercel; this process indexes processor
+# events (reorg-aware), confirms payments, reconciles with the chain, expires intents, delivers webhooks and marks
+# Shopify orders paid. Several instances are safe (worker_leases), one is enough.
+services:
+  - type: worker
+    name: mezocommerce-worker
+    runtime: node
+    plan: starter
+    buildCommand: npm ci --include=dev
+    startCommand: npm run worker
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      # Shared Postgres (Neon/Supabase) — the same DATABASE_URL as the Vercel web app.
+      - key: DATABASE_URL
+        sync: false
+      # Own schema when the database is shared with other apps (needs the session pooler URL, port 5432)
+      - key: DATABASE_SCHEMA
+        value: mezocommerce
+      # Chain + contracts (same values as the web app)
+      - key: NEXT_PUBLIC_MEZO_RPC_URL
+        value: https://rpc.test.mezo.org
+      - key: NEXT_PUBLIC_MUSD_ADDRESS
+        value: "0x118917a40FAF1CD7a13dB0Ef56C86De7973Ac503"
+      - key: NEXT_PUBLIC_PROCESSOR_ADDRESS
+        sync: false
+      - key: NEXT_PUBLIC_DEPLOY_BLOCK
+        sync: false
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
+      # Shopify credentials are decrypted by the worker (orderMarkAsPaid) — same value as the web app.
+      - key: ENCRYPTION_KEY
+        sync: false
+      # Address (not key!) of the platform intent signer, for merchant reconciliation (isSigner). The worker never
+      # signs intents; INTENT_SIGNER_PRIVATE_KEY stays on the web app only.
+      - key: PLATFORM_SIGNER_ADDRESS
+        sync: false
+      - key: CONFIRMATIONS
+        value: "2"
+      - key: WORKER_INTERVAL_MS
+        value: "5000"
+      - key: RECONCILE_EVERY
+        value: "20"
