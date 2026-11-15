@@ -1,0 +1,33 @@
+# Checkout UI extension: shows a "Pay with MUSD" button on the thank-you and order-status pages for orders that
+# used the MUSD manual payment method. NOT built or deployed in this repo — see ../README.md.
+api_version = "2025-07"
+
+[[extensions]]
+name = "MezoCommerce pay link"
+handle = "mezocommerce-pay-link"
+type = "ui_extension"
+
+[[extensions.targeting]]
+module = "./src/PayLink.jsx"
+target = "purchase.thank-you.block.render"
+
+[[extensions.targeting]]
+module = "./src/PayLink.jsx"
+target = "customer-account.order-status.block.render"
+
+[extensions.capabilities]
+api_access = false
+network_access = false
+
+[extensions.settings]
+  [[extensions.settings.fields]]
+  key = "app_url"
+  type = "single_line_text_field"
+  name = "MezoCommerce app URL"
+  description = "e.g. https://mezocommerce.example (no trailing slash)"
+
+  [[extensions.settings.fields]]
+  key = "payment_method_name"
+  type = "single_line_text_field"
+  name = "Manual payment method name"
+  description = "Must match the method name saved in MezoCommerce → Settings → Shopify (default: Pay with MUSD)"

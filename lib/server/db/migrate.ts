@@ -1,0 +1,14 @@
+// `npm run db:migrate` — applies schema.sql (idempotent) to DATABASE_URL or the local PGlite store.
+import { closeDb, dbKind, dbSchema, getDb } from "./index";
+
+async function main() {
+  const db = await getDb();
+  const [r] = await db<{ n: number }>`SELECT count(*)::int AS n FROM information_schema.tables WHERE table_schema = ${dbSchema() ?? "public"}`;
+  console.log(`[db:migrate] ${dbKind()} ok — schema ${dbSchema() ?? "public"}, ${r?.n ?? 0} tables`);
+  await closeDb();
+}
+
+main().catch((e) => {
+  console.error("[db:migrate] failed", e);
+  process.exit(1);
+});

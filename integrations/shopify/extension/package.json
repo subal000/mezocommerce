@@ -1,0 +1,11 @@
+{
+  "name": "mezocommerce-pay-link",
+  "private": true,
+  "version": "0.1.0",
+  "license": "MIT",
+  "dependencies": {
+    "@shopify/ui-extensions": "2025.7.x",
+    "@shopify/ui-extensions-react": "2025.7.x",
+    "react": "^18.0.0"
+  }
+}
